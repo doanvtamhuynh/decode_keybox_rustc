@@ -8,10 +8,12 @@ static mut CERTIFICATE_1: &[u8] = &[];
 static mut CERTIFICATE_2: &[u8] = &[];
 static mut CERTIFICATE_3: &[u8] = &[];
 
-const KEYBOX_PATH: &str = r"D:\MyProject\decode_keybox_rustc\res\keybox.xml";
+const ROOT_DIR: &str = env!("CARGO_MANIFEST_DIR");
+const KEYBOX_PATH: &str = r"\res\keybox.xml";
 
 fn read_keybox_file() -> String {
-    let path = Path::new(KEYBOX_PATH);
+    let path_str = format!("{}{}", ROOT_DIR, KEYBOX_PATH);
+    let path = Path::new(&path_str);
     if !path.exists() {
         return "".to_string();  
     }
@@ -75,4 +77,5 @@ fn main() {
     } else {
         println!("false")
     }
+    println!("{}", read_keybox_file())
 }
