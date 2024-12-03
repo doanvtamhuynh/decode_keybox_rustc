@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 base64 = "0.21"
 quick-xml = "0.22"
+xml = "0.8"
