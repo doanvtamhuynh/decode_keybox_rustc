@@ -37,7 +37,7 @@ fn clean_key_or_certificate(text: &str) -> String {
                      .replace("-----END CERTIFICATE-----", "")
                      .replace("-----BEGIN RSA PRIVATE KEY-----", "")
                      .replace("-----END RSA PRIVATE KEY-----", "");
-    
+    cleaned = cleaned.replace("\n", "").replace("\r", "");
     cleaned = cleaned.trim().to_string();
     cleaned
 }

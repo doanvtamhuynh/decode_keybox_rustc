@@ -3,11 +3,12 @@ use std::io::Read;
 use std::path::Path;
 use base64::{decode, encode};
 mod parseXML;
+mod convert_key;
 
-static mut EC_PRIVATE_KEY: &[u8] = &[];
-static mut CERTIFICATE_1: &[u8] = &[];
-static mut CERTIFICATE_2: &[u8] = &[];
-static mut CERTIFICATE_3: &[u8] = &[];
+static mut EC_PRIVATE_KEY: Vec<u8> = vec![];
+static mut CERTIFICATE_1: Vec<u8> = vec![];
+static mut CERTIFICATE_2: Vec<u8> = vec![];
+static mut CERTIFICATE_3: Vec<u8> = vec![];
 
 const ROOT_DIR: &str = env!("CARGO_MANIFEST_DIR");
 const KEYBOX_PATH: &str = r"\res\keybox.xml";
@@ -37,39 +38,46 @@ fn set_keybox() -> bool {
         return false;
     }
     else{
-        let keybox = "keypriv|key1|key2|key3";
+        let keyboxs = parseXML::parse_xml(read_keybox_file().as_str());
 
+        let ec_private_key = &keyboxs[0];
+        let certificate_1 = &keyboxs[1];
+        let certificate_2 = &keyboxs[2];
+        let certificate_3 = &keyboxs[3];
 
-        let mut ec_private_key = "";
-        let mut certificate_1 = "";
-        let mut certificate_2 = "";
-        let mut certificate_3 = "";
-        
-        let parts: Vec<&str> = keybox.split('|').collect();
-        if parts.len() == 4 {
-            ec_private_key = parts[0];
-            certificate_1 = parts[1];
-            certificate_2 = parts[2];
-            certificate_3 = parts[3];
+        unsafe {
+            EC_PRIVATE_KEY = convert_key::base64_to_bytes(ec_private_key.as_str());;
         }
-    
-        println!("EC Private Key: {}", ec_private_key);
-        println!("Certificate 1: {}", certificate_1);
-        println!("Certificate 2: {}", certificate_2);
-        println!("Certificate 3: {}", certificate_3);
+
+        unsafe {
+            CERTIFICATE_1 = convert_key::base64_to_bytes(certificate_1.as_str());;
+        }
+
+        unsafe {
+            CERTIFICATE_2 = convert_key::base64_to_bytes(certificate_2.as_str());;
+        }
+
+        unsafe {
+            CERTIFICATE_3 = convert_key::base64_to_bytes(certificate_3.as_str());;
+        }
 
         return true;
     }
 }
 
 fn main() {
-    if set_keybox() {
-        println!("true")
-    } else {
-        println!("false")
-    }
-    let attributes = parseXML::parse_xml(read_keybox_file().as_str());
-    for attribute in attributes {
-        println!("{}", attribute);
+    if set_keybox(){
+        unsafe {
+            println!("EC_PRIVATE_KEY: {:?}", EC_PRIVATE_KEY);
+        }
+        unsafe {
+            println!("CERTIFICATE_1: {:?}", CERTIFICATE_1);
+        }
+        unsafe {
+            println!("CERTIFICATE_2: {:?}", CERTIFICATE_2);
+        }
+        unsafe {
+            println!("CERTIFICATE_3: {:?}", CERTIFICATE_3);
+        }
     }
 }
