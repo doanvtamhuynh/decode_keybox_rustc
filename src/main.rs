@@ -38,29 +38,17 @@ fn set_keybox() -> bool {
         return false;
     }
     else{
-        let keyboxs = parseXML::parse_xml(read_keybox_file().as_str());
-
-        let ec_private_key = &keyboxs[0];
-        let certificate_1 = &keyboxs[1];
-        let certificate_2 = &keyboxs[2];
-        let certificate_3 = &keyboxs[3];
-
-        unsafe {
+        unsafe{
+            let keyboxs = parseXML::parse_xml(read_keybox_file().as_str());
+            let ec_private_key = &keyboxs[0];
+            let certificate_1 = &keyboxs[1];
+            let certificate_2 = &keyboxs[2];
+            let certificate_3 = &keyboxs[3];
             EC_PRIVATE_KEY = convert_key::base64_to_bytes(ec_private_key.as_str());;
-        }
-
-        unsafe {
-            CERTIFICATE_1 = convert_key::base64_to_bytes(certificate_1.as_str());;
-        }
-
-        unsafe {
+            CERTIFICATE_1 = convert_key::base64_to_bytes(certificate_1.as_str());
             CERTIFICATE_2 = convert_key::base64_to_bytes(certificate_2.as_str());;
-        }
-
-        unsafe {
             CERTIFICATE_3 = convert_key::base64_to_bytes(certificate_3.as_str());;
         }
-
         return true;
     }
 }
@@ -69,14 +57,8 @@ fn main() {
     if set_keybox(){
         unsafe {
             println!("EC_PRIVATE_KEY: {:?}", EC_PRIVATE_KEY);
-        }
-        unsafe {
             println!("CERTIFICATE_1: {:?}", CERTIFICATE_1);
-        }
-        unsafe {
             println!("CERTIFICATE_2: {:?}", CERTIFICATE_2);
-        }
-        unsafe {
             println!("CERTIFICATE_3: {:?}", CERTIFICATE_3);
         }
     }
